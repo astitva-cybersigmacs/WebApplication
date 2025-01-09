@@ -7,10 +7,12 @@ import com.example.webapplication.WebApplication.model.WebApplicationReport;
 import com.example.webapplication.WebApplication.service.WebApplicationReportService;
 import com.example.webapplication.WebApplication.utils.ResponseModel;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -92,6 +94,31 @@ public class WebApplicationReportController {
         }
     }
 
+    @GetMapping("/vulnerability/image/{projectId}/{index}")
+    public ResponseEntity<byte[]> getVulnerabilityImageByIndex(
+            @PathVariable long projectId,
+            @PathVariable int index) {
+        try {
+            List<byte[]> images = this.webApplicationReportService.getVulnerabilityImagesByProjectId(projectId);
+
+            if (images.isEmpty()) {
+                throw new RuntimeException("No images found for project id: " + projectId);
+            }
+
+            if (index >= images.size()) {
+                throw new RuntimeException("Image index out of bounds");
+            }
+
+            String contentType = "image/png";
+
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.valueOf(contentType))
+                    .body(images.get(index));
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
 
 }

@@ -20,4 +20,6 @@ public interface WebApplicationReportService {
     List<SummaryOfObservation> getSummaryObservationsByProjectId(long projectId);
 
     List<VulnerabilityDetails> getVulnerabilityDetailsByProjectId(long projectId);
+
+    List<byte[]> getVulnerabilityImagesByProjectId(long projectId);
 }
