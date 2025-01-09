@@ -21,7 +21,7 @@ public class WebApplicationReportController {
 
     private WebApplicationReportService webApplicationReportService;
 
-    @PostMapping("/key-finding/{projectId}")
+    @PostMapping("/key-finding")
     public ResponseEntity<Object> addOrUpdateReport(@RequestBody WebApplicationReport webApplicationReport) {
         try {
             WebApplicationReport savedReport = this.webApplicationReportService.addOrUpdateReport(webApplicationReport.getProjectId(), webApplicationReport);
@@ -31,7 +31,7 @@ public class WebApplicationReportController {
         }
     }
 
-    @PostMapping("/summary-observation/{projectId}")
+    @PostMapping("/summary-observation")
     public ResponseEntity<Object> addOrUpdateSummaryObservation(@RequestBody WebApplicationReport webApplicationReport) {
         try {
             WebApplicationReport savedReport = this.webApplicationReportService.addOrUpdateSummaryObservation(webApplicationReport.getProjectId(), webApplicationReport);
