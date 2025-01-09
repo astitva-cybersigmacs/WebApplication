@@ -128,4 +128,18 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
         }
         return existingReport.getSummaryOfObservationList();
     }
+
+    @Override
+    @Transactional
+    public List<VulnerabilityDetails> getVulnerabilityDetailsByProjectId(long projectId) {
+        // Fetch the WebApplicationReport based on the projectId
+        WebApplicationReport existingReport = this.webApplicationReportRepository.findByProjectId(projectId);
+
+        if (existingReport == null) {
+            throw new RuntimeException("Report not found for project id: " + projectId);
+        }
+
+        return existingReport.getVulnerabilityDetailsList();
+    }
+
 }

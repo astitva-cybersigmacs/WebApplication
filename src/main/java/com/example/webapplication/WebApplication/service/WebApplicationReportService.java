@@ -2,6 +2,7 @@ package com.example.webapplication.WebApplication.service;
 
 import com.example.webapplication.WebApplication.model.KeyFinding;
 import com.example.webapplication.WebApplication.model.SummaryOfObservation;
+import com.example.webapplication.WebApplication.model.VulnerabilityDetails;
 import com.example.webapplication.WebApplication.model.WebApplicationReport;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,4 +18,6 @@ public interface WebApplicationReportService {
     List<KeyFinding> getKeyFindingsByProjectId(long projectId);
 
     List<SummaryOfObservation> getSummaryObservationsByProjectId(long projectId);
+
+    List<VulnerabilityDetails> getVulnerabilityDetailsByProjectId(long projectId);
 }

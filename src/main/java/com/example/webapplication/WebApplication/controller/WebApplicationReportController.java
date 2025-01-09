@@ -2,6 +2,7 @@ package com.example.webapplication.WebApplication.controller;
 
 import com.example.webapplication.WebApplication.model.KeyFinding;
 import com.example.webapplication.WebApplication.model.SummaryOfObservation;
+import com.example.webapplication.WebApplication.model.VulnerabilityDetails;
 import com.example.webapplication.WebApplication.model.WebApplicationReport;
 import com.example.webapplication.WebApplication.service.WebApplicationReportService;
 import com.example.webapplication.WebApplication.utils.ResponseModel;
@@ -82,6 +83,18 @@ public class WebApplicationReportController {
             return ResponseModel.error(e.getMessage());
         }
     }
+
+    @GetMapping("/VulnerabilityDetails/{projectId}")
+    public ResponseEntity<?> getVulnerabilityDetails(@PathVariable long projectId) {
+        try {
+            // Fetch the vulnerability details by projectId
+            List<VulnerabilityDetails> vulnerabilityDetailsList = webApplicationReportService.getVulnerabilityDetailsByProjectId(projectId);
+            return ResponseEntity.ok(vulnerabilityDetailsList);
+        } catch (Exception e) {
+            return ResponseModel.error(e.getMessage());
+        }
+    }
+
 
 
 }
