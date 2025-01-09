@@ -34,8 +34,8 @@ public class WebApplicationReportController {
     @PostMapping("/summary-observation")
     public ResponseEntity<Object> addOrUpdateSummaryObservation(@RequestBody WebApplicationReport webApplicationReport) {
         try {
-            WebApplicationReport savedReport = this.webApplicationReportService.addOrUpdateSummaryObservation(webApplicationReport.getProjectId(), webApplicationReport);
-            return ResponseModel.success("Summary of observations added/updated successfully", savedReport);
+            this.webApplicationReportService.addOrUpdateSummaryObservation(webApplicationReport.getProjectId(), webApplicationReport);
+            return ResponseModel.success("Summary of observations added/updated successfully");
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
         }
@@ -52,10 +52,10 @@ public class WebApplicationReportController {
                                                            @RequestParam String proofOfVulnerabilityType,
                                                            @RequestParam MultipartFile file) {
         try {
-            WebApplicationReport savedReport = this.webApplicationReportService.addOrUpdateVulnerability(
+             this.webApplicationReportService.addOrUpdateVulnerability(
                     projectId, name, summary, remedy, remedyReference,resourceAffected, proofOfVulnerability,
                     proofOfVulnerabilityType, file);
-            return ResponseModel.success("Vulnerability details added/updated successfully", savedReport);
+            return ResponseModel.success("Vulnerability details added/updated successfully");
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
         }

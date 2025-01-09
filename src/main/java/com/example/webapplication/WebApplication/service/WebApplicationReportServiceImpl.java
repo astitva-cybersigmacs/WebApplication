@@ -5,6 +5,7 @@ import com.example.webapplication.WebApplication.model.SummaryOfObservation;
 import com.example.webapplication.WebApplication.model.VulnerabilityDetails;
 import com.example.webapplication.WebApplication.model.WebApplicationReport;
 import com.example.webapplication.WebApplication.repository.KeyFindingRepository;
+import com.example.webapplication.WebApplication.repository.SummaryOfObservationRepository;
 import com.example.webapplication.WebApplication.repository.WebApplicationReportRepository;
 import com.example.webapplication.WebApplication.utils.FileUtils;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,7 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
 
     private WebApplicationReportRepository webApplicationReportRepository;
     private KeyFindingRepository keyFindingRepository;
+    private SummaryOfObservationRepository summaryOfObservationRepository;
 
     @Override
     @Transactional
@@ -79,17 +81,26 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
             throw new RuntimeException("Report not found for project id: " + projectId);
         }
 
+        // Delete old summary observations
+        Set<Long> summaryObservationIds = new HashSet<>();
+        if (existingReport.getSummaryOfObservationList() != null) {
+            for (SummaryOfObservation observation : existingReport.getSummaryOfObservationList()) {
+                summaryObservationIds.add(observation.getSummaryOfObservationId());
+            }
+            this.summaryOfObservationRepository.deleteAllByIdInBatch(summaryObservationIds);
+        }
+
         // Update summary observations
         if (newReport.getSummaryOfObservationList() != null) {
-            existingReport.getSummaryOfObservationList().clear();
             for (SummaryOfObservation observation : newReport.getSummaryOfObservationList()) {
                 observation.setWebApplicationReport(existingReport);
-                existingReport.getSummaryOfObservationList().add(observation);
             }
+            existingReport.setSummaryOfObservationList(newReport.getSummaryOfObservationList());
         }
 
         return this.webApplicationReportRepository.save(existingReport);
     }
+
 
     @Override
     @Transactional
