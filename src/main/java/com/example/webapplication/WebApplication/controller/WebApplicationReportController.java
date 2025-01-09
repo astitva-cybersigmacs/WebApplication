@@ -22,11 +22,9 @@ public class WebApplicationReportController {
     private WebApplicationReportService webApplicationReportService;
 
     @PostMapping("/key-finding/{projectId}")
-    public ResponseEntity<Object> addOrUpdateReport(@PathVariable long projectId,
-                                                    @RequestBody WebApplicationReport webApplicationReport) {
+    public ResponseEntity<Object> addOrUpdateReport(@RequestBody WebApplicationReport webApplicationReport) {
         try {
-            webApplicationReport.setProjectId(projectId);
-            WebApplicationReport savedReport = this.webApplicationReportService.addOrUpdateReport(projectId, webApplicationReport);
+            WebApplicationReport savedReport = this.webApplicationReportService.addOrUpdateReport(webApplicationReport.getProjectId(), webApplicationReport);
             return ResponseModel.success("Report added/updated successfully", savedReport);
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
@@ -34,10 +32,9 @@ public class WebApplicationReportController {
     }
 
     @PostMapping("/summary-observation/{projectId}")
-    public ResponseEntity<Object> addOrUpdateSummaryObservation(@PathVariable long projectId,
-                                                                @RequestBody WebApplicationReport webApplicationReport) {
+    public ResponseEntity<Object> addOrUpdateSummaryObservation(@RequestBody WebApplicationReport webApplicationReport) {
         try {
-            WebApplicationReport savedReport = this.webApplicationReportService.addOrUpdateSummaryObservation(projectId, webApplicationReport);
+            WebApplicationReport savedReport = this.webApplicationReportService.addOrUpdateSummaryObservation(webApplicationReport.getProjectId(), webApplicationReport);
             return ResponseModel.success("Summary of observations added/updated successfully", savedReport);
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
