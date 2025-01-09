@@ -64,7 +64,7 @@ public class WebApplicationReportController {
     @GetMapping("/key-finding/{projectId}")
     public ResponseEntity<Object> getKeyFindingsByProjectId(@PathVariable long projectId) {
         try {
-            List<KeyFinding> keyFindings = webApplicationReportService.getKeyFindingsByProjectId(projectId);
+            List<KeyFinding> keyFindings = this.webApplicationReportService.getKeyFindingsByProjectId(projectId);
             return ResponseModel.success("Key findings fetched successfully", keyFindings);
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
@@ -74,7 +74,7 @@ public class WebApplicationReportController {
     @GetMapping("/summary-observation/{projectId}")
     public ResponseEntity<Object> getSummaryObservationsByProjectId(@PathVariable long projectId) {
         try {
-            List<SummaryOfObservation> summaryObservations = webApplicationReportService.getSummaryObservationsByProjectId(projectId);
+            List<SummaryOfObservation> summaryObservations = this.webApplicationReportService.getSummaryObservationsByProjectId(projectId);
             return ResponseModel.success("Summary of observations fetched successfully", summaryObservations);
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
@@ -85,7 +85,7 @@ public class WebApplicationReportController {
     public ResponseEntity<?> getVulnerabilityDetails(@PathVariable long projectId) {
         try {
             // Fetch the vulnerability details by projectId
-            List<VulnerabilityDetails> vulnerabilityDetailsList = webApplicationReportService.getVulnerabilityDetailsByProjectId(projectId);
+            List<VulnerabilityDetails> vulnerabilityDetailsList = this.webApplicationReportService.getVulnerabilityDetailsByProjectId(projectId);
             return ResponseEntity.ok(vulnerabilityDetailsList);
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
