@@ -25,7 +25,7 @@ public class WebApplicationReportController {
     public ResponseEntity<Object> addOrUpdateReport(@RequestBody WebApplicationReport webApplicationReport) {
         try {
             this.webApplicationReportService.addOrUpdateReport(webApplicationReport.getProjectId(), webApplicationReport);
-            return ResponseModel.success("Report added/updated successfully");
+            return ResponseModel.success("Report added successfully");
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
         }
