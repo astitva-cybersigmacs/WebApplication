@@ -4,6 +4,7 @@ import com.example.webapplication.WebApplication.model.KeyFinding;
 import com.example.webapplication.WebApplication.model.SummaryOfObservation;
 import com.example.webapplication.WebApplication.model.VulnerabilityDetails;
 import com.example.webapplication.WebApplication.model.WebApplicationReport;
+import com.example.webapplication.WebApplication.repository.KeyFindingRepository;
 import com.example.webapplication.WebApplication.repository.WebApplicationReportRepository;
 import com.example.webapplication.WebApplication.utils.FileUtils;
 import jakarta.transaction.Transactional;
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -20,6 +23,7 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
 
 
     private WebApplicationReportRepository webApplicationReportRepository;
+    private KeyFindingRepository keyFindingRepository;
 
     @Override
     @Transactional
@@ -32,13 +36,23 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
             newReport.setWebApplicationReportId(existingReport.getWebApplicationReportId());
             newReport.setProjectId(projectId);
 
-            // Update key findings
+            // Delete old key findings before updating
+            Set<Long> keyFindingIds = new HashSet<>();
+            if (existingReport.getKeyFindingList() != null) {
+                for (KeyFinding keyFinding : existingReport.getKeyFindingList()) {
+                    keyFindingIds.add(keyFinding.getKeyFindingId());
+                }
+                this.keyFindingRepository.deleteAllByIdInBatch(keyFindingIds);
+            }
+
+            // Update relationships for new key findings
             if (newReport.getKeyFindingList() != null) {
                 for (KeyFinding keyFinding : newReport.getKeyFindingList()) {
                     keyFinding.setWebApplicationReport(newReport);
                 }
             }
 
+            // Save and return the updated report
             return this.webApplicationReportRepository.save(newReport);
         } else {
             // Create new report
@@ -51,9 +65,11 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
                 }
             }
 
+            // Save and return the new report
             return this.webApplicationReportRepository.save(newReport);
         }
     }
+
 
     @Override
     @Transactional
