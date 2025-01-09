@@ -6,6 +6,7 @@ import com.example.webapplication.WebApplication.model.VulnerabilityDetails;
 import com.example.webapplication.WebApplication.model.WebApplicationReport;
 import com.example.webapplication.WebApplication.repository.KeyFindingRepository;
 import com.example.webapplication.WebApplication.repository.SummaryOfObservationRepository;
+import com.example.webapplication.WebApplication.repository.VulnerabilityDetailsRepository;
 import com.example.webapplication.WebApplication.repository.WebApplicationReportRepository;
 import com.example.webapplication.WebApplication.utils.FileUtils;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,7 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
     private WebApplicationReportRepository webApplicationReportRepository;
     private KeyFindingRepository keyFindingRepository;
     private SummaryOfObservationRepository summaryOfObservationRepository;
+    private VulnerabilityDetailsRepository vulnerabilityDetailsRepository;
 
     @Override
     @Transactional
@@ -105,13 +107,24 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
     @Override
     @Transactional
     public WebApplicationReport addOrUpdateVulnerability(long projectId, String name, String summary, String remedy,
-                                                         List<String> remedyReference, String resourceAffected, String proofOfVulnerability,
-                                                         String proofOfVulnerabilityType, MultipartFile file) {
+                                                         List<String> remedyReference, String resourceAffected,
+                                                         String proofOfVulnerability, String proofOfVulnerabilityType,
+                                                         MultipartFile file) {
         WebApplicationReport existingReport = this.webApplicationReportRepository.findByProjectId(projectId);
         if (existingReport == null) {
             throw new RuntimeException("Report not found for project id: " + projectId);
         }
 
+        // Delete old vulnerabilities
+        Set<Long> vulnerabilityIds = new HashSet<>();
+        if (existingReport.getVulnerabilityDetailsList() != null) {
+            for (VulnerabilityDetails vulnerability : existingReport.getVulnerabilityDetailsList()) {
+                vulnerabilityIds.add(vulnerability.getVulnerabilityDetailsId());
+            }
+            this.vulnerabilityDetailsRepository.deleteAllByIdInBatch(vulnerabilityIds);
+        }
+
+        // Create new vulnerability details
         VulnerabilityDetails vulnerabilityDetails = new VulnerabilityDetails();
         vulnerabilityDetails.setName(name);
         vulnerabilityDetails.setSummary(summary);
@@ -129,8 +142,9 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
             throw new RuntimeException("Error uploading and compressing file: " + e.getMessage());
         }
 
-        // Add vulnerability to the report
+        // Associate the new vulnerability with the report
         vulnerabilityDetails.setWebApplicationReport(existingReport);
+        existingReport.getVulnerabilityDetailsList().clear(); // Clear the old list
         existingReport.getVulnerabilityDetailsList().add(vulnerabilityDetails);
 
         return this.webApplicationReportRepository.save(existingReport);
