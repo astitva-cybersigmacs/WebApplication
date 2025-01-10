@@ -54,20 +54,29 @@ public class WebApplicationReportController {
         }
     }
 
-    @PostMapping("/vulnerability/{projectId}")
-    public ResponseEntity<Object> addOrUpdateVulnerability(@PathVariable long projectId,
-                                                           @RequestParam String name,
-                                                           @RequestParam String summary,
-                                                           @RequestParam String remedy,
-                                                           @RequestParam List<String> remedyReference,
-                                                           @RequestParam String resourceAffected,
-                                                           @RequestParam String proofOfVulnerability,
-                                                           @RequestParam String proofOfVulnerabilityType,
-                                                           @RequestParam MultipartFile file) {
+    @PostMapping("/vulnerability")
+    public ResponseEntity<Object> addOrUpdateVulnerability(
+            @RequestParam("reportId") long reportId,
+            @RequestParam("projectId") long projectId,
+            @RequestParam("name") String name,
+            @RequestParam("summary") String summary,
+            @RequestParam("remedy") String remedy,
+            @RequestParam("remedyReference") List<String> remedyReference,
+            @RequestParam("resourceAffected") String resourceAffected,
+            @RequestParam("proofOfVulnerability") String proofOfVulnerability,
+            @RequestParam("proofOfVulnerabilityType") String proofOfVulnerabilityType,
+            @RequestParam("file") MultipartFile file) {
         try {
-             this.webApplicationReportService.addOrUpdateVulnerability(
-                    projectId, name, summary, remedy, remedyReference,resourceAffected, proofOfVulnerability,
-                    proofOfVulnerabilityType, file);
+            if (reportId == 0) {
+                return ResponseModel.error("Report ID is required");
+            }
+            if (projectId == 0) {
+                return ResponseModel.error("Project ID is required");
+            }
+            this.webApplicationReportService.addOrUpdateVulnerability(
+                    reportId, projectId, name, summary, remedy, remedyReference, resourceAffected,
+                    proofOfVulnerability, proofOfVulnerabilityType, file
+            );
             return ResponseModel.success("Vulnerability details added/updated successfully");
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());

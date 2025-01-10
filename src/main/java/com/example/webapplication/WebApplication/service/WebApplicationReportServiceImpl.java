@@ -128,13 +128,16 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
 
     @Override
     @Transactional
-    public WebApplicationReport addOrUpdateVulnerability(long projectId, String name, String summary, String remedy,
-                                                         List<String> remedyReference, String resourceAffected,
+    public WebApplicationReport addOrUpdateVulnerability(long reportId, long projectId, String name, String summary,
+                                                         String remedy, List<String> remedyReference, String resourceAffected,
                                                          String proofOfVulnerability, String proofOfVulnerabilityType,
                                                          MultipartFile file) {
-        WebApplicationReport existingReport = this.webApplicationReportRepository.findByProjectId(projectId);
+        // Find existing report using both reportId and projectId
+        WebApplicationReport existingReport = this.webApplicationReportRepository
+                .findByReportIdAndProjectId(reportId, projectId);
+
         if (existingReport == null) {
-            throw new RuntimeException("Report not found for project id: " + projectId);
+            throw new RuntimeException("Report not found for report id: " + reportId + " and project id: " + projectId);
         }
 
         // Delete old vulnerabilities

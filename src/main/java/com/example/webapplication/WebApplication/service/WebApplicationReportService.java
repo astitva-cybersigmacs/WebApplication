@@ -13,7 +13,9 @@ public interface WebApplicationReportService {
 
     WebApplicationReport addOrUpdateSummaryObservation(long reportId, WebApplicationReport webApplicationReport);
 
-    WebApplicationReport addOrUpdateVulnerability(long projectId, String name, String summary, String remedy, List<String> remedyReference,String resourceAffected, String proofOfVulnerability, String proofOfVulnerabilityType, MultipartFile file);
+    WebApplicationReport addOrUpdateVulnerability(long reportId, long projectId, String name, String summary,
+                                                  String remedy, List<String> remedyReference, String resourceAffected, String proofOfVulnerability,
+                                                  String proofOfVulnerabilityType, MultipartFile file);
 
     List<KeyFinding> getKeyFindingsByProjectId(long projectId);
 
