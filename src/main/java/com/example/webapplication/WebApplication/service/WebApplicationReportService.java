@@ -17,9 +17,9 @@ public interface WebApplicationReportService {
                                                   String remedy, List<String> remedyReference, String resourceAffected, String proofOfVulnerability,
                                                   String proofOfVulnerabilityType, MultipartFile file);
 
-    List<KeyFinding> getKeyFindingsByProjectId(long projectId);
+    List<KeyFinding> getKeyFindings(long projectId, long reportId);
 
-    List<SummaryOfObservation> getSummaryObservationsByProjectId(long projectId);
+    List<SummaryOfObservation> getSummaryObservations(long projectId, long reportId);
 
     List<VulnerabilityDetails> getVulnerabilityDetailsByProjectId(long projectId);
 

@@ -177,20 +177,24 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
 
     @Override
     @Transactional
-    public List<KeyFinding> getKeyFindingsByProjectId(long projectId) {
-        WebApplicationReport existingReport = this.webApplicationReportRepository.findByProjectId(projectId);
+    public List<KeyFinding> getKeyFindings(long projectId, long reportId) {
+        WebApplicationReport existingReport = this.webApplicationReportRepository
+                .findByReportIdAndProjectId(reportId, projectId);
+
         if (existingReport == null) {
-            throw new RuntimeException("Report not found for project id: " + projectId);
+            throw new RuntimeException("Report not found for report id: " + reportId + " and project id: " + projectId);
         }
         return existingReport.getKeyFindingList();
     }
 
     @Override
     @Transactional
-    public List<SummaryOfObservation> getSummaryObservationsByProjectId(long projectId) {
-        WebApplicationReport existingReport = this.webApplicationReportRepository.findByProjectId(projectId);
+    public List<SummaryOfObservation> getSummaryObservations(long projectId, long reportId) {
+        WebApplicationReport existingReport = this.webApplicationReportRepository
+                .findByReportIdAndProjectId(reportId, projectId);
+
         if (existingReport == null) {
-            throw new RuntimeException("Report not found for project id: " + projectId);
+            throw new RuntimeException("Report not found for report id: " + reportId + " and project id: " + projectId);
         }
         return existingReport.getSummaryOfObservationList();
     }

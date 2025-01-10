@@ -83,20 +83,36 @@ public class WebApplicationReportController {
         }
     }
 
-    @GetMapping("/key-finding/{projectId}")
-    public ResponseEntity<Object> getKeyFindingsByProjectId(@PathVariable long projectId) {
+    @GetMapping("/key-finding/{projectId}/{reportId}")
+    public ResponseEntity<Object> getKeyFindings(
+            @PathVariable long projectId,
+            @PathVariable long reportId) {
         try {
-            List<KeyFinding> keyFindings = this.webApplicationReportService.getKeyFindingsByProjectId(projectId);
+            if (projectId == 0) {
+                return ResponseModel.error("Project ID is required");
+            }
+            if (reportId == 0) {
+                return ResponseModel.error("Report ID is required");
+            }
+            List<KeyFinding> keyFindings = this.webApplicationReportService.getKeyFindings(projectId, reportId);
             return ResponseModel.success("Key findings fetched successfully", keyFindings);
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
         }
     }
 
-    @GetMapping("/summary-observation/{projectId}")
-    public ResponseEntity<Object> getSummaryObservationsByProjectId(@PathVariable long projectId) {
+    @GetMapping("/summary-observation/{projectId}/{reportId}")
+    public ResponseEntity<Object> getSummaryObservations(
+            @PathVariable long projectId,
+            @PathVariable long reportId) {
         try {
-            List<SummaryOfObservation> summaryObservations = this.webApplicationReportService.getSummaryObservationsByProjectId(projectId);
+            if (projectId == 0) {
+                return ResponseModel.error("Project ID is required");
+            }
+            if (reportId == 0) {
+                return ResponseModel.error("Report ID is required");
+            }
+            List<SummaryOfObservation> summaryObservations = this.webApplicationReportService.getSummaryObservations(projectId, reportId);
             return ResponseModel.success("Summary of observations fetched successfully", summaryObservations);
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
