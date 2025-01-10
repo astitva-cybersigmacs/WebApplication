@@ -11,7 +11,7 @@ import java.util.List;
 public interface WebApplicationReportService {
     WebApplicationReport addOrUpdateReport(long reportId, WebApplicationReport webApplicationReport);
 
-    WebApplicationReport addOrUpdateSummaryObservation(long projectId, WebApplicationReport webApplicationReport);
+    WebApplicationReport addOrUpdateSummaryObservation(long reportId, WebApplicationReport webApplicationReport);
 
     WebApplicationReport addOrUpdateVulnerability(long projectId, String name, String summary, String remedy, List<String> remedyReference,String resourceAffected, String proofOfVulnerability, String proofOfVulnerabilityType, MultipartFile file);
 

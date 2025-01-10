@@ -80,30 +80,49 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
 
     @Override
     @Transactional
-    public WebApplicationReport addOrUpdateSummaryObservation(long projectId, WebApplicationReport newReport) {
-        WebApplicationReport existingReport = this.webApplicationReportRepository.findByProjectId(projectId);
-        if (existingReport == null) {
-            throw new RuntimeException("Report not found for project id: " + projectId);
-        }
+    public WebApplicationReport addOrUpdateSummaryObservation(long reportId, WebApplicationReport newReport) {
+        // Find existing report using both reportId and projectId
+        WebApplicationReport existingReport = this.webApplicationReportRepository
+                .findByReportIdAndProjectId(reportId, newReport.getProjectId());
 
-        // Delete old summary observations
-        Set<Long> summaryObservationIds = new HashSet<>();
-        if (existingReport.getSummaryOfObservationList() != null) {
-            for (SummaryOfObservation observation : existingReport.getSummaryOfObservationList()) {
-                summaryObservationIds.add(observation.getSummaryOfObservationId());
+        if (existingReport != null) {
+            // Preserve the existing IDs
+            newReport.setWebApplicationReportId(existingReport.getWebApplicationReportId());
+            newReport.setReportId(reportId);
+            newReport.setProjectId(existingReport.getProjectId());
+
+            // Delete old summary observations before updating
+            Set<Long> summaryObservationIds = new HashSet<>();
+            if (existingReport.getSummaryOfObservationList() != null) {
+                for (SummaryOfObservation observation : existingReport.getSummaryOfObservationList()) {
+                    summaryObservationIds.add(observation.getSummaryOfObservationId());
+                }
+                this.summaryOfObservationRepository.deleteAllByIdInBatch(summaryObservationIds);
             }
-            this.summaryOfObservationRepository.deleteAllByIdInBatch(summaryObservationIds);
-        }
 
-        // Update summary observations
-        if (newReport.getSummaryOfObservationList() != null) {
-            for (SummaryOfObservation observation : newReport.getSummaryOfObservationList()) {
-                observation.setWebApplicationReport(existingReport);
+            // Update relationships for new summary observations
+            if (newReport.getSummaryOfObservationList() != null) {
+                for (SummaryOfObservation observation : newReport.getSummaryOfObservationList()) {
+                    observation.setWebApplicationReport(newReport);
+                }
             }
-            existingReport.setSummaryOfObservationList(newReport.getSummaryOfObservationList());
-        }
 
-        return this.webApplicationReportRepository.save(existingReport);
+            // Save and return the updated report
+            return this.webApplicationReportRepository.save(newReport);
+        } else {
+            // Create new report
+            newReport.setReportId(reportId);
+
+            // Set up relationships for summary observations
+            if (newReport.getSummaryOfObservationList() != null) {
+                for (SummaryOfObservation observation : newReport.getSummaryOfObservationList()) {
+                    observation.setWebApplicationReport(newReport);
+                }
+            }
+
+            // Save and return the new report
+            return this.webApplicationReportRepository.save(newReport);
+        }
     }
 
 

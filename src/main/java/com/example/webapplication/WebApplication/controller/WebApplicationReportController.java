@@ -41,7 +41,13 @@ public class WebApplicationReportController {
     @PostMapping("/summary-observation")
     public ResponseEntity<Object> addOrUpdateSummaryObservation(@RequestBody WebApplicationReport webApplicationReport) {
         try {
-            this.webApplicationReportService.addOrUpdateSummaryObservation(webApplicationReport.getProjectId(), webApplicationReport);
+            if (webApplicationReport.getReportId() == 0) {
+                return ResponseModel.error("Report ID is required");
+            }
+            if (webApplicationReport.getProjectId() == 0) {
+                return ResponseModel.error("Project ID is required");
+            }
+            this.webApplicationReportService.addOrUpdateSummaryObservation(webApplicationReport.getReportId(), webApplicationReport);
             return ResponseModel.success("Summary of observations added/updated successfully");
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
