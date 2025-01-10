@@ -119,11 +119,17 @@ public class WebApplicationReportController {
         }
     }
 
-    @GetMapping("/VulnerabilityDetails/{projectId}")
-    public ResponseEntity<?> getVulnerabilityDetails(@PathVariable long projectId) {
+    @GetMapping("/VulnerabilityDetails/{projectId}/{reportId}")
+    public ResponseEntity<?> getVulnerabilityDetails(@PathVariable long projectId, @PathVariable long reportId) {
         try {
+            if (projectId == 0) {
+                return ResponseModel.error("Project ID is required");
+            }
+            if (reportId == 0) {
+                return ResponseModel.error("Report ID is required");
+            }
             // Fetch the vulnerability details by projectId
-            List<VulnerabilityDetails> vulnerabilityDetailsList = this.webApplicationReportService.getVulnerabilityDetailsByProjectId(projectId);
+            List<VulnerabilityDetails> vulnerabilityDetailsList = this.webApplicationReportService.getVulnerabilityDetailsByProjectId(projectId, reportId);
             return ResponseEntity.ok(vulnerabilityDetailsList);
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
