@@ -25,7 +25,13 @@ public class WebApplicationReportController {
     @PostMapping("/key-finding")
     public ResponseEntity<Object> addOrUpdateReport(@RequestBody WebApplicationReport webApplicationReport) {
         try {
-            this.webApplicationReportService.addOrUpdateReport(webApplicationReport.getProjectId(), webApplicationReport);
+            if (webApplicationReport.getReportId() == 0) {
+                return ResponseModel.error("Report ID is required");
+            }
+            if (webApplicationReport.getProjectId() == 0) {
+                return ResponseModel.error("Project ID is required");
+            }
+            this.webApplicationReportService.addOrUpdateReport(webApplicationReport.getReportId(), webApplicationReport);
             return ResponseModel.success("Report added successfully");
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());

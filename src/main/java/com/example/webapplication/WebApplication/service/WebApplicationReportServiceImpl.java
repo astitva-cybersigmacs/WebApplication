@@ -32,14 +32,16 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
 
     @Override
     @Transactional
-    public WebApplicationReport addOrUpdateReport(long projectId, WebApplicationReport newReport) {
-        // Find existing report
-        WebApplicationReport existingReport = this.webApplicationReportRepository.findByProjectId(projectId);
+    public WebApplicationReport addOrUpdateReport(long reportId, WebApplicationReport newReport) {
+        // Find existing report using both reportId and projectId
+        WebApplicationReport existingReport = this.webApplicationReportRepository
+                .findByReportIdAndProjectId(reportId, newReport.getProjectId());
 
         if (existingReport != null) {
-            // Preserve the existing ID and projectId
+            // Preserve the existing ID and reportId
             newReport.setWebApplicationReportId(existingReport.getWebApplicationReportId());
-            newReport.setProjectId(projectId);
+            newReport.setReportId(reportId);
+            // No need to set projectId as it's already correct in newReport
 
             // Delete old key findings before updating
             Set<Long> keyFindingIds = new HashSet<>();
@@ -61,7 +63,7 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
             return this.webApplicationReportRepository.save(newReport);
         } else {
             // Create new report
-            newReport.setProjectId(projectId);
+            newReport.setReportId(reportId);
 
             // Set up relationships for key findings
             if (newReport.getKeyFindingList() != null) {

@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface WebApplicationReportService {
-    WebApplicationReport addOrUpdateReport(long projectId, WebApplicationReport webApplicationReport);
+    WebApplicationReport addOrUpdateReport(long reportId, WebApplicationReport webApplicationReport);
 
     WebApplicationReport addOrUpdateSummaryObservation(long projectId, WebApplicationReport webApplicationReport);
 
