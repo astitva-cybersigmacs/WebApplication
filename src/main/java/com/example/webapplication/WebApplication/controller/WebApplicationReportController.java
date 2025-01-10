@@ -5,6 +5,7 @@ import com.example.webapplication.WebApplication.model.SummaryOfObservation;
 import com.example.webapplication.WebApplication.model.VulnerabilityDetails;
 import com.example.webapplication.WebApplication.model.WebApplicationReport;
 import com.example.webapplication.WebApplication.service.WebApplicationReportService;
+import com.example.webapplication.WebApplication.utils.FileUtils;
 import com.example.webapplication.WebApplication.utils.ResponseModel;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
@@ -136,31 +137,15 @@ public class WebApplicationReportController {
         }
     }
 
-    @GetMapping("/vulnerability/image/{projectId}/{index}")
-    public ResponseEntity<byte[]> getVulnerabilityImageByIndex(
-            @PathVariable long projectId,
-            @PathVariable int index) {
+    @GetMapping("/vulnerability/image/{projectId}/{reportId}")
+    public ResponseEntity<Object> getVulnerabilityImageByIndex(@PathVariable long projectId, @PathVariable long reportId) {
         try {
-            List<byte[]> images = this.webApplicationReportService.getVulnerabilityImagesByProjectId(projectId);
+            List<byte[]> images = this.webApplicationReportService.getVulnerabilityImagesByProjectId(projectId, reportId);
+            return ResponseModel.mediaFile("image/png", images.get(0));
 
-            if (images.isEmpty()) {
-                throw new RuntimeException("No images found for project id: " + projectId);
-            }
-
-            if (index >= images.size()) {
-                throw new RuntimeException("Image index out of bounds");
-            }
-
-            String contentType = "image/png";
-
-            return ResponseEntity
-                    .ok()
-                    .contentType(MediaType.valueOf(contentType))
-                    .body(images.get(index));
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            return ResponseModel.error(e.getMessage());
         }
     }
-
 
 }

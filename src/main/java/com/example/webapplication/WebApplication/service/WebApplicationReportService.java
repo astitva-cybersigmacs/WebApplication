@@ -23,5 +23,5 @@ public interface WebApplicationReportService {
 
     List<VulnerabilityDetails> getVulnerabilityDetailsByProjectId(long projectId, long reportId);
 
-    List<byte[]> getVulnerabilityImagesByProjectId(long projectId);
+    List<byte[]> getVulnerabilityImagesByProjectId(long projectId, long reportId);
 }

@@ -214,8 +214,8 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
 
     @Override
     @Transactional
-    public List<byte[]> getVulnerabilityImagesByProjectId(long projectId) {
-        WebApplicationReport existingReport = this.webApplicationReportRepository.findByProjectId(projectId);
+    public List<byte[]> getVulnerabilityImagesByProjectId(long projectId, long reportId) {
+        WebApplicationReport existingReport = this.webApplicationReportRepository.findByReportIdAndProjectId(reportId, projectId);
         if (existingReport == null) {
             throw new RuntimeException("Report not found for project id: " + projectId);
         }
