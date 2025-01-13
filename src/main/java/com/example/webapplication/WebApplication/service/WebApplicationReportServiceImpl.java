@@ -1,13 +1,7 @@
 package com.example.webapplication.WebApplication.service;
 
-import com.example.webapplication.WebApplication.model.KeyFinding;
-import com.example.webapplication.WebApplication.model.SummaryOfObservation;
-import com.example.webapplication.WebApplication.model.VulnerabilityDetails;
-import com.example.webapplication.WebApplication.model.WebApplicationReport;
-import com.example.webapplication.WebApplication.repository.KeyFindingRepository;
-import com.example.webapplication.WebApplication.repository.SummaryOfObservationRepository;
-import com.example.webapplication.WebApplication.repository.VulnerabilityDetailsRepository;
-import com.example.webapplication.WebApplication.repository.WebApplicationReportRepository;
+import com.example.webapplication.WebApplication.model.*;
+import com.example.webapplication.WebApplication.repository.*;
 import com.example.webapplication.WebApplication.utils.FileUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -29,6 +23,7 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
     private KeyFindingRepository keyFindingRepository;
     private SummaryOfObservationRepository summaryOfObservationRepository;
     private VulnerabilityDetailsRepository vulnerabilityDetailsRepository;
+    private VulnerabilityDetailsImagesRepository vulnerabilityDetailsImagesRepository;
 
     @Override
     @Transactional
@@ -131,7 +126,7 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
     public WebApplicationReport addOrUpdateVulnerability(long reportId, long projectId, String name, String summary,
                                                          String remedy, List<String> remedyReference, String resourceAffected,
                                                          String proofOfVulnerability, String proofOfVulnerabilityType,
-                                                         MultipartFile file) {
+                                                         List<MultipartFile> files) {
         // Find existing report using both reportId and projectId
         WebApplicationReport existingReport = this.webApplicationReportRepository
                 .findByReportIdAndProjectId(reportId, projectId);
@@ -155,20 +150,27 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
         vulnerabilityDetails.setSummary(summary);
         vulnerabilityDetails.setRemedy(remedy);
         vulnerabilityDetails.setResourceAffected(resourceAffected);
-        vulnerabilityDetails.setProofOfVulnerability(proofOfVulnerability);
-        vulnerabilityDetails.setProofOfVulnerabilityType(proofOfVulnerabilityType);
         vulnerabilityDetails.setRemedyReference(remedyReference);
 
-        try {
-            // Compress the file before saving it
-            byte[] compressedFile = FileUtils.compressFile(file.getBytes());
-            vulnerabilityDetails.setFile(compressedFile);
-        } catch (IOException e) {
-            throw new RuntimeException("Error uploading and compressing file: " + e.getMessage());
+        List<VulnerabilityDetailsImages> imagesList = new ArrayList<>();
+        for (int i = 0; i < files.size(); i++) {
+            VulnerabilityDetailsImages image = new VulnerabilityDetailsImages();
+            try {
+                byte[] compressedFile = FileUtils.compressFile(files.get(i).getBytes());
+                image.setFile(compressedFile);
+                image.setProofOfVulnerability(files.get(i).getName());
+                image.setProofOfVulnerabilityType(files.get(i).getContentType());
+                image.setVulnerabilityDetails(vulnerabilityDetails);
+                imagesList.add(image);
+            } catch (IOException e) {
+                throw new RuntimeException("Error uploading and compressing file: " + e.getMessage());
+            }
         }
 
-        // Associate the new vulnerability with the report
+        vulnerabilityDetails.setVulnerabilityDetailsImagesList(imagesList);
         vulnerabilityDetails.setWebApplicationReport(existingReport);
+
+
         existingReport.getVulnerabilityDetailsList().clear(); // Clear the old list
         existingReport.getVulnerabilityDetailsList().add(vulnerabilityDetails);
 
@@ -214,21 +216,17 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
 
     @Override
     @Transactional
-    public List<byte[]> getVulnerabilityImagesByProjectId(long projectId, long reportId) {
-        WebApplicationReport existingReport = this.webApplicationReportRepository.findByReportIdAndProjectId(reportId, projectId);
-        if (existingReport == null) {
-            throw new RuntimeException("Report not found for project id: " + projectId);
+    public byte[] getVulnerabilityImageById(long imageId) {
+        VulnerabilityDetailsImages image = this.vulnerabilityDetailsImagesRepository.findByVulnerabilityDetailsImageId(imageId);
+        if (image == null) {
+            throw new RuntimeException("Image not found for id: " + imageId);
         }
 
-        List<byte[]> decompressedImages = new ArrayList<>();
-        for (VulnerabilityDetails vulnerability : existingReport.getVulnerabilityDetailsList()) {
-            if (vulnerability.getFile() != null) {
-                byte[] decompressedImage = FileUtils.decompressFile(vulnerability.getFile());
-                decompressedImages.add(decompressedImage);
-            }
+        if (image.getFile() == null) {
+            throw new RuntimeException("No file found for image id: " + imageId);
         }
 
-        return decompressedImages;
+        return FileUtils.decompressFile(image.getFile());
     }
 
 }

@@ -15,7 +15,7 @@ public interface WebApplicationReportService {
 
     WebApplicationReport addOrUpdateVulnerability(long reportId, long projectId, String name, String summary,
                                                   String remedy, List<String> remedyReference, String resourceAffected, String proofOfVulnerability,
-                                                  String proofOfVulnerabilityType, MultipartFile file);
+                                                  String proofOfVulnerabilityType, List<MultipartFile> files);
 
     List<KeyFinding> getKeyFindings(long projectId, long reportId);
 
@@ -23,5 +23,5 @@ public interface WebApplicationReportService {
 
     List<VulnerabilityDetails> getVulnerabilityDetailsByProjectId(long projectId, long reportId);
 
-    List<byte[]> getVulnerabilityImagesByProjectId(long projectId, long reportId);
+    byte[] getVulnerabilityImageById(long imageId);
 }

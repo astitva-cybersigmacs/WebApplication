@@ -64,7 +64,7 @@ public class WebApplicationReportController {
             @RequestParam("resourceAffected") String resourceAffected,
             @RequestParam("proofOfVulnerability") String proofOfVulnerability,
             @RequestParam("proofOfVulnerabilityType") String proofOfVulnerabilityType,
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("files") List<MultipartFile> files) {
         try {
             if (reportId == 0) {
                 return ResponseModel.error("Report ID is required");
@@ -74,7 +74,7 @@ public class WebApplicationReportController {
             }
             this.webApplicationReportService.addOrUpdateVulnerability(
                     reportId, projectId, name, summary, remedy, remedyReference, resourceAffected,
-                    proofOfVulnerability, proofOfVulnerabilityType, file
+                    proofOfVulnerability, proofOfVulnerabilityType, files
             );
             return ResponseModel.success("Vulnerability details added/updated successfully");
         } catch (Exception e) {
@@ -135,12 +135,11 @@ public class WebApplicationReportController {
         }
     }
 
-    @GetMapping("/vulnerability/image/{projectId}/{reportId}")
-    public ResponseEntity<Object> getVulnerabilityImageByIndex(@PathVariable long projectId, @PathVariable long reportId) {
+    @GetMapping("/vulnerability/image/{imageId}")
+    public ResponseEntity<Object> getVulnerabilityImageById(@PathVariable long imageId) {
         try {
-            List<byte[]> images = this.webApplicationReportService.getVulnerabilityImagesByProjectId(projectId, reportId);
-            return ResponseModel.mediaFile("image/png", images.get(0));
-
+            byte[] image = this.webApplicationReportService.getVulnerabilityImageById(imageId);
+            return ResponseModel.mediaFile("image/png", image);
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
         }
