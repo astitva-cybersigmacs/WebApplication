@@ -82,53 +82,40 @@ public class WebApplicationReportController {
         }
     }
 
-    @GetMapping("/key-finding/{projectId}/{reportId}")
-    public ResponseEntity<Object> getKeyFindings(
-            @PathVariable long projectId,
-            @PathVariable long reportId) {
+    @GetMapping("/key-finding/{reportId}")
+    public ResponseEntity<Object> getKeyFindings(@PathVariable long reportId) {
         try {
-            if (projectId == 0) {
-                return ResponseModel.error("Project ID is required");
-            }
             if (reportId == 0) {
                 return ResponseModel.error("Report ID is required");
             }
-            List<KeyFinding> keyFindings = this.webApplicationReportService.getKeyFindings(projectId, reportId);
+            List<KeyFinding> keyFindings = this.webApplicationReportService.getKeyFindings(reportId);
             return ResponseModel.success("Key findings fetched successfully", keyFindings);
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
         }
     }
 
-    @GetMapping("/summary-observation/{projectId}/{reportId}")
-    public ResponseEntity<Object> getSummaryObservations(
-            @PathVariable long projectId,
-            @PathVariable long reportId) {
+    @GetMapping("/summary-observation/{reportId}")
+    public ResponseEntity<Object> getSummaryObservations(@PathVariable long reportId) {
         try {
-            if (projectId == 0) {
-                return ResponseModel.error("Project ID is required");
-            }
             if (reportId == 0) {
                 return ResponseModel.error("Report ID is required");
             }
-            List<SummaryOfObservation> summaryObservations = this.webApplicationReportService.getSummaryObservations(projectId, reportId);
+            List<SummaryOfObservation> summaryObservations = this.webApplicationReportService.getSummaryObservations(reportId);
             return ResponseModel.success("Summary of observations fetched successfully", summaryObservations);
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());
         }
     }
 
-    @GetMapping("/VulnerabilityDetails/{projectId}/{reportId}")
-    public ResponseEntity<?> getVulnerabilityDetails(@PathVariable long projectId, @PathVariable long reportId) {
+    @GetMapping("/VulnerabilityDetails/{reportId}")
+    public ResponseEntity<?> getVulnerabilityDetails(@PathVariable long reportId) {
         try {
-            if (projectId == 0) {
-                return ResponseModel.error("Project ID is required");
-            }
             if (reportId == 0) {
                 return ResponseModel.error("Report ID is required");
             }
             // Fetch the vulnerability details by projectId
-            List<VulnerabilityDetails> vulnerabilityDetailsList = this.webApplicationReportService.getVulnerabilityDetailsByProjectId(projectId, reportId);
+            List<VulnerabilityDetails> vulnerabilityDetailsList = this.webApplicationReportService.getVulnerabilityDetailsByProjectId(reportId);
             return ResponseEntity.ok(vulnerabilityDetailsList);
         } catch (Exception e) {
             return ResponseModel.error(e.getMessage());

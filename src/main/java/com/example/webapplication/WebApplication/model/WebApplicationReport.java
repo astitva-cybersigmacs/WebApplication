@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "web_application_report")
+@Table(name = "web_application_report", uniqueConstraints = @UniqueConstraint(columnNames = {"reportId"}))
 public class WebApplicationReport {
 
     @Id

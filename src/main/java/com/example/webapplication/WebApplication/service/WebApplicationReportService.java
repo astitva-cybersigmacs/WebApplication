@@ -17,11 +17,11 @@ public interface WebApplicationReportService {
                                                   String remedy, List<String> remedyReference, String resourceAffected, String proofOfVulnerability,
                                                   String proofOfVulnerabilityType, List<MultipartFile> files);
 
-    List<KeyFinding> getKeyFindings(long projectId, long reportId);
+    List<KeyFinding> getKeyFindings(long reportId);
 
-    List<SummaryOfObservation> getSummaryObservations(long projectId, long reportId);
+    List<SummaryOfObservation> getSummaryObservations(long reportId);
 
-    List<VulnerabilityDetails> getVulnerabilityDetailsByProjectId(long projectId, long reportId);
+    List<VulnerabilityDetails> getVulnerabilityDetailsByProjectId(long reportId);
 
     byte[] getVulnerabilityImageById(long imageId);
 }

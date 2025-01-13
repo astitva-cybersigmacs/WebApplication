@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WebApplicationReportRepository extends JpaRepository<WebApplicationReport, Long> {
-    WebApplicationReport findByProjectId(long projectId);
     WebApplicationReport findByReportIdAndProjectId(long reportId, long projectId);
+    WebApplicationReport findByReportId(long reportId);
 }

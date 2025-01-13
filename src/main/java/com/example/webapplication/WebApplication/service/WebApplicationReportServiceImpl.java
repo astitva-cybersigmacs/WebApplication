@@ -179,36 +179,35 @@ public class WebApplicationReportServiceImpl implements WebApplicationReportServ
 
     @Override
     @Transactional
-    public List<KeyFinding> getKeyFindings(long projectId, long reportId) {
-        WebApplicationReport existingReport = this.webApplicationReportRepository
-                .findByReportIdAndProjectId(reportId, projectId);
+    public List<KeyFinding> getKeyFindings(long reportId) {
+        WebApplicationReport existingReport = this.webApplicationReportRepository.findByReportId(reportId);
 
         if (existingReport == null) {
-            throw new RuntimeException("Report not found for report id: " + reportId + " and project id: " + projectId);
+            throw new RuntimeException("Report not found for report id: " + reportId);
         }
         return existingReport.getKeyFindingList();
     }
 
     @Override
     @Transactional
-    public List<SummaryOfObservation> getSummaryObservations(long projectId, long reportId) {
+    public List<SummaryOfObservation> getSummaryObservations(long reportId) {
         WebApplicationReport existingReport = this.webApplicationReportRepository
-                .findByReportIdAndProjectId(reportId, projectId);
+                .findByReportId(reportId);
 
         if (existingReport == null) {
-            throw new RuntimeException("Report not found for report id: " + reportId + " and project id: " + projectId);
+            throw new RuntimeException("Report not found for report id: " + reportId);
         }
         return existingReport.getSummaryOfObservationList();
     }
 
     @Override
     @Transactional
-    public List<VulnerabilityDetails> getVulnerabilityDetailsByProjectId(long projectId, long reportId) {
+    public List<VulnerabilityDetails> getVulnerabilityDetailsByProjectId(long reportId) {
         // Fetch the WebApplicationReport based on the projectId
-        WebApplicationReport existingReport = this.webApplicationReportRepository.findByReportIdAndProjectId(reportId, projectId);
+        WebApplicationReport existingReport = this.webApplicationReportRepository.findByReportId(reportId);
 
         if (existingReport == null) {
-            throw new RuntimeException("Report not found for project id: " + projectId);
+            throw new RuntimeException("Report not found for Report id: " + reportId);
         }
 
         return existingReport.getVulnerabilityDetailsList();
